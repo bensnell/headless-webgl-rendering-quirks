@@ -5,13 +5,11 @@ varying vec2 X; // vTexCoord
 
 uniform vec2 R, D; // resolution, dims
 uniform sampler2D tex0;
+uniform vec4 o, w; // offsets, weights
 
 void main() {
 
-  vec4 o = vec4(0., 1.411764705, 3.294117647, 5.176470588), // offsets
-  w = vec4(.09824127505, .2969069646, .09447039785, .0103813624), // weights
-
-  c = vec4(0.), // rgba color
+  vec4 c = vec4(0.), // rgba color
   l;
   float e, t, b, s = 0.; // sum
   for (int i = 0; i < 4; i++) {

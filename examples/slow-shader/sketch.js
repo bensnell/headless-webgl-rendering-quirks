@@ -60,6 +60,8 @@ class Blur {
         u.setUniform('R', [f,g]);
         u.setUniform('tex0', v);
         u.setUniform('D', w);
+        u.setUniform('o', [0., 1.411764705, 3.294117647, 5.176470588]);
+        u.setUniform('w', [.09824127505, .2969069646, .09447039785, .0103813624]);
         t.rect(0, 0, f, g);
         x.resetShader();
         x.clear();
