@@ -1,0 +1,8 @@
+node_modules
+.node-persist
+.aws-sam
+.DS_Store
+build/
+.env
+yarn-error.log
+*.png
