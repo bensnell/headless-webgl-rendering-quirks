@@ -73,58 +73,81 @@ const gradient = (_,a,b,c=[0,0,1,1,0],d=null,n=100) => {
 var iter = 0;
 var canvas2D;
 var compositor;
+var useCompositor = true;
+
 
 function preload() {
-  compositor = loadShader('assets/compositor.vert', 'assets/compositor.frag');
+  if (useCompositor) {
+    compositor = loadShader('assets/compositor.vert', 'assets/compositor.frag');
+  }
 }
 
 function setup() {
 
-  createCanvas(D, D, WEBGL);
+  createCanvas(D, D, useCompositor ? WEBGL : P2D);
   colorMode(RGB, 1);
   noStroke();
   frameRate(10);
 
   // Generate a gradient background
-  canvas2D = getGraphics(0, D, D);
-  canvas2D.background(color(1));
-  gradient(
-    canvas2D,
-    lerpColor(color("#F5DCB6"), color("#662200"), .2),
-    color(1),
-    [0.5,0,0.5,1,0],
-    [0.5,0,0.5,0,0],
-    200
-  );
+  if (useCompositor) {
+    canvas2D = getGraphics(0, D, D);
+    canvas2D.background(color(1));
+    gradient(
+      canvas2D,
+      lerpColor(color("#F5DCB6"), color("#662200"), .2),
+      color(1),
+      [0.5,0,0.5,1,0],
+      [0.5,0,0.5,0,0],
+      200
+    );
+  } else {
+    background(color(1));
+    gradient(
+      this,
+      lerpColor(color("#F5DCB6"), color("#662200"), .2),
+      color(1),
+      [0.5,0,0.5,1,0],
+      [0.5,0,0.5,0,0],
+      200
+    );
+  }
   // Composite the gradient onto the primary webgl canvas (this)
-  shader(compositor);
-  compositor.setUniform('S', this._renderer);
-  compositor.setUniform('T', canvas2D);
-  compositor.setUniform('D', [canvas2D.width,canvas2D.height]);
-  compositor.setUniform('F', [1,1,0,0]);
-  rect(0, 0, D, D);
-  resetShader();
+  if (useCompositor) {
+    shader(compositor);
+    compositor.setUniform('S', this._renderer);
+    compositor.setUniform('T', canvas2D);
+    compositor.setUniform('D', [canvas2D.width,canvas2D.height]);
+    compositor.setUniform('F', [1,1,0,0]);
+    rect(0, 0, D, D);
+    resetShader();
+  }
 }
 
 function draw() {
 
   iter++;
 
-  transform(canvas2D, (_)=>{
+  transform(useCompositor ? canvas2D : this, (_)=>{
     let i = iter/35;
-    _.clear(0,0,0,0);
+    if (useCompositor) _.clear(0,0,0,0);
     _.fill(1-i, i, 0, 0.1);
     _.circle(.5 + cos(i*TWO_PI)/4, .5 + sin(i*TWO_PI)/4, .25);
   });
 
-  shader(compositor);
-  compositor.setUniform('S', this._renderer);
-  compositor.setUniform('T', canvas2D);
-  compositor.setUniform('D', [canvas2D.width,canvas2D.height]);
-  // compositor.setUniform('F', [1,1,0,1/255]);
-  compositor.setUniform('F', [0.9607843137254902, 0.8627450980392157, 0.7137254901960784, .03]);
-  rect(0, 0, D, D);
-  resetShader();
+  if (useCompositor) {
+    shader(compositor);
+    compositor.setUniform('S', this._renderer);
+    compositor.setUniform('T', canvas2D);
+    compositor.setUniform('D', [canvas2D.width,canvas2D.height]);
+    // compositor.setUniform('F', [1,1,0,1/255]);
+    compositor.setUniform('F', [0.9607843137254902, 0.8627450980392157, 0.7137254901960784, .03]);
+    rect(0, 0, D, D);
+    resetShader();
+  } else {
+    let c = color([0.9607843137254902, 0.8627450980392157, 0.7137254901960784, .02]);
+    background(c);
+  }
 
   // console.log(iter);
 
