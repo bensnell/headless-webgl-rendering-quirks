@@ -22,25 +22,35 @@ vec4 blend(vec4 s, vec4 t) {
   // return vec4( mix(s.rgb, t.rgb, t.a), t.a + s.a * (1.0 - t.a));
 }
 
+float round(float a) {
+  return floor(a + 0.5);
+}
+
+// Using this removes some alpha artifacts
+vec4 toUint8(vec4 c) {
+  return vec4(
+    float(round(c.r*255.0))/255.0,
+    float(round(c.g*255.0))/255.0,
+    float(round(c.b*255.0))/255.0,
+    float(round(c.a*255.0))/255.0
+  );
+}
+
 void main() {
 
   vec2 uv = vec2( X.x, 1.-X.y );
 
-  vec4 s = texture2D( S, uv );
-  vec4 t = texture2D( T, uv );
+  vec4 s = toUint8( texture2D( S, uv ) );
+  vec4 t = toUint8( texture2D( T, uv ) );
+  vec4 f = toUint8( F );
 
   vec4 c = blend(s, t);
 
-  c = blend(c, F);
+  c = blend(c, f);
+  
+  c = toUint8(c);
   
   c = clamp(c, 0.0, 1.0);
-
-  // c = vec4(
-  //   float(int(c.r*255.0))/255.0,
-  //   float(int(c.g*255.0))/255.0,
-  //   float(int(c.b*255.0))/255.0,
-  //   float(int(c.a*255.0))/255.0
-  // );
 
   gl_FragColor = c;
 
