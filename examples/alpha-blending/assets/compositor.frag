@@ -22,18 +22,9 @@ vec4 blend(vec4 s, vec4 t) {
   // return vec4( mix(s.rgb, t.rgb, t.a), t.a + s.a * (1.0 - t.a));
 }
 
-float round(float a) {
-  return floor(a + 0.5);
-}
-
 // Using this removes some alpha artifacts
 vec4 toUint8(vec4 c) {
-  return vec4(
-    float(round(c.r*255.0))/255.0,
-    float(round(c.g*255.0))/255.0,
-    float(round(c.b*255.0))/255.0,
-    float(round(c.a*255.0))/255.0
-  );
+  return floor(c*255.0+vec4(.5))/255.0;
 }
 
 void main() {
