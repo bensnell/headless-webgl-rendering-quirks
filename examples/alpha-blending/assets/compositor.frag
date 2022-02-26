@@ -1,4 +1,4 @@
-precision lowp float;
+precision mediump float;
 
 // Texture coordinates
 varying vec2 X; // vTexCoord
@@ -47,5 +47,5 @@ void main() {
       0., 
       1.
     );
-    
+
 }
