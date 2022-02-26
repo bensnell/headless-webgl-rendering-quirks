@@ -85,7 +85,7 @@ class CR {
 
 var iter = 0;
 var canvas2D;
-var compositor = new Compositor();
+var compositor = new CR();
 var useCompositor = true;
 
 
