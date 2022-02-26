@@ -7,7 +7,8 @@ varying vec2 X; // vTexCoord
 uniform sampler2D A, B; // texture
 uniform vec4 F; // fog color
 
-vec4 blend(vec4 s, vec4 t) {
+// bLend
+vec4 L(vec4 s, vec4 t) {
   // Blend method 1
   // return s * (1.0-t.a) + t * t.a;
 
@@ -23,26 +24,28 @@ vec4 blend(vec4 s, vec4 t) {
 }
 
 // Using this removes some alpha artifacts
-vec4 toUint8(vec4 c) {
+// toUint8
+vec4 U(vec4 c) {
   return floor(c*255.+vec4(.5))/255.;
 }
 
 void main() {
 
-  vec2 uv = vec2( X.x, 1.-X.y );
+  vec2 p = vec2( X.x, 1.-X.y ); // uv
 
-  vec4 s = toUint8( texture2D( A, uv ) );
-  vec4 t = toUint8( texture2D( B, uv ) );
-  vec4 f = toUint8( F );
-
-  vec4 c = blend(s, t);
-
-  c = blend(c, f);
-  
-  c = toUint8(c);
-  
-  c = clamp(c, 0.0, 1.0);
-
-  gl_FragColor = c;
-
+  gl_FragColor = 
+    clamp( 
+      U( 
+        L(
+          L(
+            U( texture2D( A, p ) ), 
+            U( texture2D( B, p ) )
+          ), 
+          U( F )
+        ) 
+      ), 
+      0., 
+      1.
+    );
+    
 }
