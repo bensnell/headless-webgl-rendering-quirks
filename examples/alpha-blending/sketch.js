@@ -56,7 +56,8 @@ const gradient = (_,a,b,c=[0,0,1,1,0],d=null,n=100) => {
   })
 }
 
-class Compositor {
+// CompositoR
+class CR {
   // Preload
   P() {
     this.s = loadShader('assets/compositor.vert', 'assets/compositor.frag'); // Shader
