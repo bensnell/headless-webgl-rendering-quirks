@@ -2,6 +2,9 @@ const W = window.innerWidth;
 const H = window.innerHeight;
 const D = Math.min(W,H);
 
+let s=p5.Shader.prototype;
+s.u=function(k,v){return this.setUniform(k,v)};
+
 const range = (a) => Array(a).fill(0).map((_,i)=>i);
 
 const transform = (_, f) => {
@@ -53,32 +56,41 @@ const gradient = (_,a,b,c=[0,0,1,1,0],d=null,n=100) => {
   })
 }
 
-// class Compositor {
-//   preload() {
-//     this.shader = loadShader('assets/compositor.vert', 'assets/compositor.frag');
-//   }
-//   setup(w,h) {
-//     let _=this;
-//     _.w = w;
-//     _.h = h;
-//     _.a = getGraphics(1, w, h);
-//     _.b = getGraphics(1, w, h);
-//   }
-//   apply(c,d) {
-
-//   }
-
-// }
+class Compositor {
+  // Preload
+  P() {
+    this.s = loadShader('assets/compositor.vert', 'assets/compositor.frag'); // Shader
+  }
+  // Setup
+  // S(a) { 
+  // }
+  // Apply
+  //  a   bottom WEBGL instance of p5.Graphics or `this` p5 window
+  //  b   top texture to composite on top of `a`; Can be WEBGL or P2D p5.Graphics; Should be same size as `a`
+  //  f   fog color as an array; default: none
+  A(a, b, f=[0,0,0,0]) {
+    let s = this.s;
+    let w = a.width;
+    let h = a.height;
+    a.shader(s);
+    s.u('A', a._renderer);
+    s.u('B', b);
+    // s.u('D', [w, h]);
+    s.u('F', f);
+    a.rect(0, 0, w, h);
+    a.resetShader();
+  }
+}
 
 var iter = 0;
 var canvas2D;
-var compositor;
+var compositor = new Compositor();
 var useCompositor = true;
 
 
 function preload() {
   if (useCompositor) {
-    compositor = loadShader('assets/compositor.vert', 'assets/compositor.frag');
+    compositor.P();
   }
 }
 
@@ -89,8 +101,9 @@ function setup() {
   noStroke();
   frameRate(10);
 
-  // Generate a gradient background
   if (useCompositor) {
+
+    // Generate a gradient background
     canvas2D = getGraphics(0, D, D);
     canvas2D.background(color(1));
     gradient(
@@ -101,7 +114,12 @@ function setup() {
       [0.5,0,0.5,0,0],
       200
     );
+
+    // Composite the gradient onto the primary webgl canvas (this)
+    compositor.A(this, canvas2D);
+
   } else {
+
     background(color(1));
     gradient(
       this,
@@ -111,16 +129,6 @@ function setup() {
       [0.5,0,0.5,0,0],
       200
     );
-  }
-  // Composite the gradient onto the primary webgl canvas (this)
-  if (useCompositor) {
-    shader(compositor);
-    compositor.setUniform('S', this._renderer);
-    compositor.setUniform('T', canvas2D);
-    compositor.setUniform('D', [canvas2D.width,canvas2D.height]);
-    compositor.setUniform('F', [1,1,0,0]);
-    rect(0, 0, D, D);
-    resetShader();
   }
 }
 
@@ -136,14 +144,13 @@ function draw() {
   });
 
   if (useCompositor) {
-    shader(compositor);
-    compositor.setUniform('S', this._renderer);
-    compositor.setUniform('T', canvas2D);
-    compositor.setUniform('D', [canvas2D.width,canvas2D.height]);
-    // compositor.setUniform('F', [1,1,0,1/255]);
-    compositor.setUniform('F', [0.9607843137254902, 0.8627450980392157, 0.7137254901960784, .03]);
-    rect(0, 0, D, D);
-    resetShader();
+
+    compositor.A(
+      this, 
+      canvas2D,
+      [0.9607843137254902, 0.8627450980392157, 0.7137254901960784, .03]
+    );
+
   } else {
     let c = color([0.9607843137254902, 0.8627450980392157, 0.7137254901960784, .02]);
     background(c);
