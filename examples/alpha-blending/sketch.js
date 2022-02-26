@@ -102,6 +102,11 @@ function setup() {
   noStroke();
   frameRate(10);
 
+  // let gl = this._renderer.GL;
+  // // console.log(gl.FUNC_ADD);
+  // gl.blendEquation(gl.FUNC_ADD);
+  // gl.blendFuncSeparate(gl.ZERO, gl.ONE, gl.ONE, gl.ONE);
+
   if (useCompositor) {
 
     // Generate a gradient background
