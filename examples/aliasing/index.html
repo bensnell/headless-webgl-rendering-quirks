@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>  
+  <title>Cranes by Ben Snell</title>
+  <script language="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+  <style>
+    body {
+      background: #FFF;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      margin: 0
+    }
+    canvas {
+      margin: auto;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    function random_hash() {
+      let x = "0123456789abcdef", hash = '0x'
+      for (let i = 64; i > 0; --i) {
+        hash += x[Math.floor(Math.random()*x.length)]
+      }
+      return hash;
+    };
+    tokenData = {
+      hash: random_hash(),
+      tokenId: "123000456"
+    };
+  </script>
+  <script src="sketch.js"></script>
+</body>
+
+</html>
