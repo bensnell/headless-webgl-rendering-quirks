@@ -100,9 +100,9 @@ function setup() {
   B.plan(500, 40);
 
   _V = getGraphics(0, D, D);
-  _V.background(color(1));
+  _V.background(color(0.8, 0.8, 0));
   transform(_V, (_)=>{
-    _.fill(1, 0, 0);
+    _.fill(0.9, 1, 0);
     _.rect(0.1,0.1,0.5,0.8);
   });
   
@@ -111,7 +111,7 @@ function setup() {
 function draw() {
 
   if (B.p.includes(_I)) {
-    B.apply(_V, _V, map(_I,0,500,1e-3,1e-5), 1, [1,1,0,.01]);
+    B.apply(_V, _V, map(_I,0,500,1e-3,1e-5)/4, 1, [1,1,0,.01]);
   } 
   _I++; 
 
